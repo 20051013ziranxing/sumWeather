@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="location"
+            type="com.example.sunnyweather.bean.searchCity.Location" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:text="@{location.adm1}"
+            android:id="@+id/search_cityitem_cityName"
+            android:layout_height="wrap_content" />
+
+        <!--<TextView
+            android:layout_width="wrap_content"
+            android:textSize="30sp"
+            android:visibility="gone"
+            android:text="@{location.id}"
+            android:id="@+id/search_cityitem_cityID"
+            android:layout_height="wrap_content" />-->
+
+    </LinearLayout>
+</layout>

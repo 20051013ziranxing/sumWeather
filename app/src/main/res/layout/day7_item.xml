@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="dadly"
+            type="com.example.sunnyweather.bean.Day.Daily" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/day7data"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:text="@{dadly.fxDate}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/day7text"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:text="@{dadly.textDay}" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="25dp"
+                android:id="@+id/day7image"
+                app:weatherImage="@{dadly.textDay}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/day7min"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:text="@{dadly.tempMin}" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="15dp"/>
+    </LinearLayout>
+</layout>
