@@ -24,6 +24,7 @@ import com.example.sunnyweather.SQLiteHelp.CityLocationViewModel;
 import com.example.sunnyweather.ViewModel.searchCityViewModel;
 import com.example.sunnyweather.bean.searchCity;
 import com.example.sunnyweather.databinding.FragmentSearchCityBinding;
+import com.example.sunnyweather.history.HistoryViewModel;
 
 import java.util.List;
 
@@ -46,10 +47,12 @@ public class searchCityFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     CityLocationViewModel cityLocationViewModel;
+    HistoryViewModel historyViewModel;
 
-    public searchCityFragment(CityLocationViewModel cityLocationViewModel) {
+    public searchCityFragment(CityLocationViewModel cityLocationViewModel, HistoryViewModel historyViewModel) {
         // Required empty public constructor
         this.cityLocationViewModel = cityLocationViewModel;
+        this.historyViewModel = historyViewModel;
     }
 
     /**
@@ -61,8 +64,9 @@ public class searchCityFragment extends Fragment {
      * @return A new instance of fragment searchCityFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static searchCityFragment newInstance(String param1, String param2, CityLocationViewModel cityLocationViewModel) {
-        searchCityFragment fragment = new searchCityFragment(cityLocationViewModel);
+    public static searchCityFragment newInstance(String param1, String param2, CityLocationViewModel cityLocationViewModel,
+                                                 HistoryViewModel historyViewModel) {
+        searchCityFragment fragment = new searchCityFragment(cityLocationViewModel, historyViewModel);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,7 +97,7 @@ public class searchCityFragment extends Fragment {
                 RecyclerView recyclerView = fragmentSearchCityBinding.recyclerViewSearchCity;
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                 recyclerView.setLayoutManager(layoutManager);
-                searchcityAdapter searchcityAdapter = new searchcityAdapter(locations, cityLocationViewModel, (CityManage) getContext());
+                searchcityAdapter searchcityAdapter = new searchcityAdapter(locations, cityLocationViewModel,historyViewModel, (CityManage) getContext());
                 recyclerView.setAdapter(searchcityAdapter);
             }
         };

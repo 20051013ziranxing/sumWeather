@@ -51,6 +51,7 @@ import com.example.sunnyweather.bean.searchCity;
 import com.example.sunnyweather.bean.sumWeather;
 import com.example.sunnyweather.databinding.ActivityCityManageBinding;
 import com.example.sunnyweather.databinding.FragmentSearchCityBinding;
+import com.example.sunnyweather.history.HistoryViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -60,10 +61,10 @@ import java.util.Map;
 
 public class CityManage extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    Location locationService;
+    private HistoryViewModel historyViewModel;
     CityLocationViewModel cityLocationViewModel;
-    private String[] data = {"定位","北京","上海","广州","深圳","杭州","成都","武汉","重庆","天津","苏州","西安","安康","渭南","南京","榆林","南京","长沙","郑州","青岛"
-            ,"东莞","昆明","宁波","合肥"};
+    private String[] data = {"定位"/*,"北京","上海","广州","深圳","杭州","成都","武汉","重庆","天津","苏州","西安","安康","渭南","南京","榆林","南京","长沙","郑州","青岛"
+            ,"东莞","昆明","宁波","合肥"*/};
     Toolbar toolbar_City;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -77,7 +78,10 @@ public class CityManage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        cityLocationViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(CityLocationViewModel.class);
+        cityLocationViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(CityLocationViewModel.class);
+        historyViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(HistoryViewModel.class);
         toolbar_City = findViewById(R.id.toolbar_CityManage);
         setSupportActionBar(toolbar_City);
         ActionBar actionBar = getSupportActionBar();
@@ -87,7 +91,7 @@ public class CityManage extends AppCompatActivity {
         }
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragmentHHH, new FragmentCitySearchMOhu(cityLocationViewModel)).commit();
+        fragmentTransaction.replace(R.id.fragmentHHH, new FragmentCitySearchMOhu(cityLocationViewModel, historyViewModel)).commit();
         /*//用户选择的城市数据列表
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(CityManage.this,
                 android.R.layout.simple_list_item_1,data);
@@ -147,7 +151,7 @@ public class CityManage extends AppCompatActivity {
         if (item.getItemId() == R.id.writeadd) {
             /*fragmentManager = getSupportFragmentManager();*/
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentHHH, new searchCityFragment(cityLocationViewModel)).commit();
+            fragmentTransaction.replace(R.id.fragmentHHH, new searchCityFragment(cityLocationViewModel, historyViewModel)).commit();
         } else {
             finish();
         }

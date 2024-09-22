@@ -25,9 +25,6 @@ public class searchCityViewModel extends ViewModel {
     private MutableLiveData<searchCity> CityData;
     public searchCityViewModel() {
         CityData = new MutableLiveData<>();
-        /*this.searchcityName = searchcityName;
-        CityData = new MutableLiveData<>();
-        loadCityData();*/
     }
     public void setQuery(String searchCityName) {
         this.searchcityName = searchCityName;

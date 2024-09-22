@@ -16,6 +16,9 @@ public class CityLocationViewModel extends AndroidViewModel {
         super(application);
         this.cityLocationRepository = new CityLocationRepository(application);
     }
+    public void updatecityLocation(CityLocation... cityLocations) {
+        cityLocationRepository.updateCityLocation(cityLocations);
+    }
     public void insertcityLocation(CityLocation... cityLocations) {
         cityLocationRepository.insertCityLocation(cityLocations);
     }
@@ -35,7 +38,7 @@ public class CityLocationViewModel extends AndroidViewModel {
     public LiveData<CityLocation> researchhh(String cityName) {
         return cityLocationRepository.getCityLocationByName(cityName);
     }
-    public LiveData<CityLocation> researchhhname(String cityName) {
+    public CityLocation researchhhname(String cityName) {
         return cityLocationRepository.getCityLocationByNamename(cityName);
     }
 }

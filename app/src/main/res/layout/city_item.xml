@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:text="30°"
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="30sp" />
             </LinearLayout>
@@ -44,16 +44,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text=""
-                    android:textSize="20sp"
-                    android:id="@+id/City_air"
+                    android:text="加载失败^~^"
+                    android:textSize="16sp"
+                    android:id="@+id/City_situation"
                     android:textColor="@color/black"/>
                 <TextView
-                    android:id="@+id/City_situation"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:text="晴"
+                    android:text=""
+                    android:id="@+id/City_air"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
             </LinearLayout>

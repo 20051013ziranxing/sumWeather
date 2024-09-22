@@ -27,10 +27,13 @@ import com.example.sunnyweather.Adapter.CityAdapter;
 import com.example.sunnyweather.SQLiteHelp.CityLocation;
 import com.example.sunnyweather.SQLiteHelp.CityLocationViewModel;
 import com.example.sunnyweather.bean.sumWeather;
+import com.example.sunnyweather.history.HistoryMessage;
+import com.example.sunnyweather.history.HistoryViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.OkHttpClient;
 
@@ -43,6 +46,7 @@ public class FragmentCitySearchMOhu extends Fragment {
     private static final String TAG = "MainActivity";
     Location locationService;
     CityLocationViewModel cityLocationViewModel;
+    HistoryViewModel historyViewModel;
     private String[] data = {"定位"/*,"北京","上海","广州","深圳","杭州","成都","武汉","重庆","天津","苏州","西安","安康","渭南","南京","榆林","南京","长沙","郑州","青岛"
             ,"东莞","昆明","宁波","合肥"*/};
     DrawerLayout mDrawerlayout;
@@ -58,8 +62,9 @@ public class FragmentCitySearchMOhu extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FragmentCitySearchMOhu(CityLocationViewModel cityLocationViewModel) {
+    public FragmentCitySearchMOhu(CityLocationViewModel cityLocationViewModel, HistoryViewModel historyViewModel) {
         this.cityLocationViewModel = cityLocationViewModel;
+        this.historyViewModel = historyViewModel;
         // Required empty public constructor
     }
 
@@ -72,8 +77,9 @@ public class FragmentCitySearchMOhu extends Fragment {
      * @return A new instance of fragment FragmentCitySearchMOhu.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentCitySearchMOhu newInstance(String param1, String param2, CityLocationViewModel cityLocationViewModel) {
-        FragmentCitySearchMOhu fragment = new FragmentCitySearchMOhu(cityLocationViewModel);
+    public static FragmentCitySearchMOhu newInstance(String param1, String param2,
+                                                     CityLocationViewModel cityLocationViewModel, HistoryViewModel historyViewModel) {
+        FragmentCitySearchMOhu fragment = new FragmentCitySearchMOhu(cityLocationViewModel,historyViewModel);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -144,15 +150,14 @@ public class FragmentCitySearchMOhu extends Fragment {
                     if (cityLocation == null) {
                         setupLocationService();
                     } else {
-                        Toast.makeText(getContext(), "这个城市添加过了", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "已经定位过了", Toast.LENGTH_SHORT).show();
                     }
-                    /*((Activity) view.getContext()).runOnUiThread(() -> mDrawerlayout.closeDrawer(GravityCompat.END));*/
                 });
             }
         });
         RecyclerView recyclerView = view.findViewById(R.id.recyclerCityUse);
         List<CityLocation> cityLocations = new ArrayList<>();
-        cityAdapter= new CityAdapter(cityLocationViewModel,cityLocations);
+        cityAdapter= new CityAdapter(cityLocationViewModel,cityLocations,historyViewModel);
         recyclerView.setAdapter(cityAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         cityLocationViewModel.research().observe(getViewLifecycleOwner(), new Observer<List<CityLocation>>() {
@@ -182,7 +187,6 @@ public class FragmentCitySearchMOhu extends Fragment {
                     Log.d(TAG, "定位失败，aMapLocation 为空");
                     return;
                 }
-                // 获取定位结果
                 if (aMapLocation.getErrorCode() == 0) {
                     Log.d(TAG, "定位成功");
                     aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
@@ -205,12 +209,34 @@ public class FragmentCitySearchMOhu extends Fragment {
                     aMapLocation.getGpsAccuracyStatus();//获取GPS的当前状态
                     Log.d(TAG, result);
                     Log.d(TAG, location);
-                    cityLocationViewModel.insertcityLocation(new CityLocation("定位", location, result));
+                    Location location1 = new Location();
+                    location1.Locationoo(result, new Location.OnLocationRetrievedListener() {
+                        @Override
+                        public void onLocationRetrieved(String locationId) {
+                            CountDownLatch latch = new CountDownLatch(1);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HistoryMessage historyMessage = historyViewModel.researcHistoryById(locationId);
+                                    Log.e("MainActivity", "观察到数据更新: " + historyMessage);
+                                    if (historyMessage == null) {
+                                        cityLocationViewModel.insertcityLocation(new CityLocation("定位", location, locationId));
+                                        historyViewModel.insertHistory(new HistoryMessage(Integer.parseInt(locationId), location));
+                                    } else {
+                                        /*Toast.makeText(getContext(), "定位获取过了",Toast.LENGTH_SHORT).show();*/
+                                    }
+                                    latch.countDown();
+                                }
+                            }).start();
+                            try {
+                                latch.await();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
                 } else {
                     Log.d(TAG, "定位失败，错误：" + aMapLocation.getErrorInfo());
-                    Log.e(TAG,"location Error, ErrCode:"
-                            + aMapLocation.getErrorCode() + ", errInfo:"
-                            + aMapLocation.getErrorInfo());
                 }
                 locationService.stopLocation();
             }

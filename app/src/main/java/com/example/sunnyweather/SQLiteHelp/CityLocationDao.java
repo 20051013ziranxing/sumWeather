@@ -21,6 +21,8 @@ public interface CityLocationDao {
     LiveData<List<CityLocation>> getAllCityLocationLive();
     @Query("SELECT * FROM cityLocationMessage WHERE cityAttributeMessage = :nameAttribute")
     CityLocation getCityLocationByName(String nameAttribute);
-    @Query("SELECT * FROM cityLocationMessage WHERE cityNameMessage = :nameAttribute")
+    @Query("SELECT * FROM cityLocationMessage WHERE cityAttributeMessage = :nameAttribute")
     CityLocation getCityLocationByNamename(String nameAttribute);
+    @Update
+    void updateCityLocation(CityLocation... CityLocations);
 }

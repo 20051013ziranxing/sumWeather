@@ -76,7 +76,7 @@ public class NowWea {
         }
 
         public String getTemp() {
-            return temp;
+            return temp + "°";
         }
 
         public void setTemp(String temp) {

@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
@@ -27,6 +28,8 @@ import com.example.sunnyweather.SQLiteHelp.CityLocation;
 import com.example.sunnyweather.SQLiteHelp.CityLocationViewModel;
 import com.example.sunnyweather.ViewModel.MyViewModel;
 import com.example.sunnyweather.databinding.ActivityMainBinding;
+import com.example.sunnyweather.history.HistoryMessage;
+import com.example.sunnyweather.history.HistoryViewModel;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity  {
     private MyPagerAdapter adapter;
     TabLayout tabLayout;
     CityLocationViewModel cityLocationViewModel;
+    HistoryViewModel historyViewModel;
     private static final String TAG = "MainActivity1";
     private ActivityMainBinding binding;
     private ActivityResultLauncher<String> requestPermission;
@@ -73,18 +77,16 @@ public class MainActivity extends AppCompatActivity  {
         cityManageViewModel.getFragments().observe(this, new Observer<List<WeatherHome>>() {
             @Override
             public void onChanged(List<WeatherHome> fragments) {
-                Log.d(TAG, "我变化了");
-                updateUI(fragments, cityManageViewModel.getTitles().getValue());
+                Log.d(TAG, "我变化了标题");
+                updateUI(cityManageViewModel.getFragments().getValue(), cityManageViewModel.getTitles().getValue());
             }
         });
 
-        cityManageViewModel.getTitles().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> titles) {
-                updateUI(cityManageViewModel.getFragments().getValue(), titles);
-            }
-        });
-        cityLocationViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(CityLocationViewModel.class);
+        cityLocationViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(CityLocationViewModel.class);
+        historyViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(HistoryViewModel.class);
+
     }
     private void updateUI(List<WeatherHome> fragments, List<String> titles) {
         if (adapter == null) {
@@ -92,12 +94,16 @@ public class MainActivity extends AppCompatActivity  {
             viewPager.setAdapter(adapter);
             setupTabLayout(tabLayout, adapter);
         } else {
-            adapter.updateFragments(fragments, titles);
-            adapter.notifyDataSetChanged();
+            adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments, titles);
+            /*adapter.updateFragments(fragments, titles);*/
+            viewPager.setAdapter(adapter);
+            Log.d(TAG, fragments.size() + " " + titles.size());
+            /*adapter.notifyDataSetChanged();*/
             tabLayout.removeAllTabs();
             for (int i = 0; i < titles.size(); i++) {
                 tabLayout.addTab(tabLayout.newTab().setText(titles.get(i)));
             }
+            setupTabLayout(tabLayout, adapter);
         }
     }
     private void setupTabLayout(TabLayout tabLayout, MyPagerAdapter adapter) {
@@ -133,9 +139,10 @@ public class MainActivity extends AppCompatActivity  {
                 List<WeatherHome> fragments = new ArrayList<>();
                 List<String> titles = new ArrayList<>();
                 for (CityLocation cityLocation : cityLocations) {
-                    WeatherHome weatherHome = WeatherHome.newInstance(cityLocation.nameid);
-                    Log.d(TAG, "添加了" + cityLocation.cityName);
+                    WeatherHome weatherHome = WeatherHome.newInstance(cityLocation.nameid,cityLocation.cityName
+                            , cityLocationViewModel, historyViewModel);
                     fragments.add(weatherHome);
+                    Log.d(TAG, "添加了" + cityLocation.cityName);
                     titles.add(cityLocation.cityName);
                 }
                 cityManageViewModel.refreshFragment(fragments, titles);

@@ -20,13 +20,22 @@ import com.example.sunnyweather.FragmentCitySearchMOhu;
 import com.example.sunnyweather.R;
 import com.example.sunnyweather.SQLiteHelp.CityLocation;
 import com.example.sunnyweather.SQLiteHelp.CityLocationViewModel;
+import com.example.sunnyweather.bean.AirNumber;
+import com.example.sunnyweather.bean.AirQuality;
+import com.example.sunnyweather.bean.Day;
+import com.example.sunnyweather.bean.NowWea;
+import com.example.sunnyweather.bean.hour24;
 import com.example.sunnyweather.bean.searchCity;
 import com.example.sunnyweather.bean.sumWeather;
 import com.example.sunnyweather.databinding.H24ItemBinding;
 import com.example.sunnyweather.databinding.SearchcityItemBinding;
+import com.example.sunnyweather.history.HistoryMessage;
+import com.example.sunnyweather.history.HistoryViewModel;
 import com.example.sunnyweather.searchCityFragment;
+import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.OkHttpClient;
 
@@ -34,10 +43,13 @@ public class searchcityAdapter extends RecyclerView.Adapter<searchcityAdapter.ci
     private List<searchCity.Location> cityList;
     private CityLocationViewModel cityLocationViewModel;
     private CityManage cityManage;
-    public searchcityAdapter(List<searchCity.Location> location, CityLocationViewModel cityLocationViewModel, CityManage cityManage) {
+    private HistoryViewModel historyViewModel;
+    public searchcityAdapter(List<searchCity.Location> location, CityLocationViewModel cityLocationViewModel,
+                             HistoryViewModel historyViewModel, CityManage cityManage) {
         this.cityList = location;
         this.cityLocationViewModel = cityLocationViewModel;
         this.cityManage = cityManage;
+        this.historyViewModel = historyViewModel;
     }
 
     public static class cityViewHolder extends RecyclerView.ViewHolder {
@@ -66,17 +78,38 @@ public class searchcityAdapter extends RecyclerView.Adapter<searchcityAdapter.ci
                     int position = cityViewHolder.getAdapterPosition();
                     searchCity.Location location = cityList.get(position);
                     Log.d("MainActivity", "执行到了获取当前对象！！！");
-                    cityLocationViewModel.researchhh(location.getId()).observe((LifecycleOwner) v.getContext(), cityLocation -> {
+                    /*cityLocationViewModel.researchhh(location.getId()).observe((LifecycleOwner) v.getContext(), cityLocation -> {
                         if (cityLocation == null) {
-                            Log.d("MainActivity", "我知道没有存储啊！！！");
+                            Log.d("MainActivity", "我知道没有存储啊！！！" + location.getId());
                             cityLocationViewModel.insertcityLocation(new CityLocation(location.getId(), location.getName(), location.getId()));
+                            historyViewModel.insertHistory(new HistoryMessage(Integer.parseInt(location.getId()), location.getName()));
                             Log.d("MainActivity", location.getName() + location.getId());
                         } else {
                             Log.d("MainActivity", "为什么存储了，明明没有！！！");
                             Toast.makeText(parent.getContext(), "这个城市添加过了", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                    cityManage.Fragmentchange(new FragmentCitySearchMOhu(cityLocationViewModel));
+                    });*/
+                    CountDownLatch latch = new CountDownLatch(1);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HistoryMessage historyMessage = historyViewModel.researcHistoryById(location.getId());
+                            Log.e("MainActivity", "观察到数据更新: " + historyMessage);
+                            if (historyMessage == null) {
+                                cityLocationViewModel.insertcityLocation(new CityLocation(location.getId(), location.getName(), location.getId()));
+                                historyViewModel.insertHistory(new HistoryMessage(Integer.parseInt(location.getId()), location.getName()));
+                            } else {
+                                /*Toast.makeText(parent.getContext(), "这个城市添加过了", Toast.LENGTH_SHORT).show();*/
+                            }
+                            latch.countDown();
+                        }
+                    }).start();
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    cityManage.Fragmentchange(new FragmentCitySearchMOhu(cityLocationViewModel, historyViewModel));
                 }
             });
         } else {

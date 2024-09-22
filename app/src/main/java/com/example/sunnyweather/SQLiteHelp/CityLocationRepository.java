@@ -17,6 +17,22 @@ public class CityLocationRepository {
         MyDataBase dataBase = MyDataBase.getInstance(context);
         this.cityLocationDao = dataBase.getCityLocationDao();
     }
+    //对数据进行修改
+    public void updateCityLocation(CityLocation... cityLocations) {
+        new UpdataCityLocationTask(cityLocationDao).execute(cityLocations);
+    }
+    class UpdataCityLocationTask extends AsyncTask<CityLocation, Void, Void> {
+        private CityLocationDao cityLocationDao;
+        public UpdataCityLocationTask(CityLocationDao cityLocationDao) {
+            this.cityLocationDao = cityLocationDao;
+        }
+
+        @Override
+        protected Void doInBackground(CityLocation... cityLocations) {
+            cityLocationDao.updateCityLocation(cityLocations);
+            return null;
+        }
+    }
     //对数据进行添加
     public void insertCityLocation(CityLocation... cityLocations) {
         new InsertCityLocationTask(cityLocationDao).execute(cityLocations);
@@ -71,8 +87,9 @@ public class CityLocationRepository {
             }
         };
     }
-    public LiveData<CityLocation> getCityLocationByNamename(String cityName) {
-        return new MutableLiveData<CityLocation>() {
+    public CityLocation getCityLocationByNamename(String cityName) {
+        return cityLocationDao.getCityLocationByNamename(cityName);
+        /*return new MutableLiveData<CityLocation>() {
             @Override
             protected void onActive() {
                 super.onActive();
@@ -85,6 +102,6 @@ public class CityLocationRepository {
                     postValue(cityLocation);
                 }).start();
             }
-        };
+        };*/
     }
 }

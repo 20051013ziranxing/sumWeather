@@ -11,7 +11,7 @@ import com.example.sunnyweather.WeatherHome;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyPagerAdapter extends FragmentPagerAdapter {
+public class MyPagerAdapter extends FragmentStatePagerAdapter {
     private List<WeatherHome> mfragmentList;
     private List<String> mTitles;
 
