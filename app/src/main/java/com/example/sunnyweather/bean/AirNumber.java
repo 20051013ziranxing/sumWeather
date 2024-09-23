@@ -51,11 +51,6 @@ public class AirNumber {
     public void setDaily(List<Daily> daily) {
         this.daily = daily;
     }
-    public void onClick(View view) {
-        // 根据 Daily 对象的数据来显示不同的提示
-        String message = daily.get(0).category != null ? "Name: " + daily.get(0).category : "No data";
-        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
-    }
     public class Daily {
         private String date;
         private String type;

@@ -3,6 +3,7 @@ package com.example.sunnyweather.Adapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sunnyweather.CityManage;
+import com.example.sunnyweather.MainActivity;
 import com.example.sunnyweather.R;
 import com.example.sunnyweather.SQLiteHelp.CityLocation;
 import com.example.sunnyweather.SQLiteHelp.CityLocationViewModel;
@@ -173,16 +175,4 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.CityViewHolder
             citysit = itemView.findViewById(R.id.City_situation);
         }
     }
-
-    /*public static class CityItem {
-        private String cityName;
-
-        public CityItem(String cityName) {
-            this.cityName = cityName;
-        }
-
-        public String getCityName() {
-            return cityName;
-        }
-    }*/
 }

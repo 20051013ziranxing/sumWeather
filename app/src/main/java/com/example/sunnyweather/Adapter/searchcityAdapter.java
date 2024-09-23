@@ -78,17 +78,6 @@ public class searchcityAdapter extends RecyclerView.Adapter<searchcityAdapter.ci
                     int position = cityViewHolder.getAdapterPosition();
                     searchCity.Location location = cityList.get(position);
                     Log.d("MainActivity", "执行到了获取当前对象！！！");
-                    /*cityLocationViewModel.researchhh(location.getId()).observe((LifecycleOwner) v.getContext(), cityLocation -> {
-                        if (cityLocation == null) {
-                            Log.d("MainActivity", "我知道没有存储啊！！！" + location.getId());
-                            cityLocationViewModel.insertcityLocation(new CityLocation(location.getId(), location.getName(), location.getId()));
-                            historyViewModel.insertHistory(new HistoryMessage(Integer.parseInt(location.getId()), location.getName()));
-                            Log.d("MainActivity", location.getName() + location.getId());
-                        } else {
-                            Log.d("MainActivity", "为什么存储了，明明没有！！！");
-                            Toast.makeText(parent.getContext(), "这个城市添加过了", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
                     CountDownLatch latch = new CountDownLatch(1);
                     new Thread(new Runnable() {
                         @Override

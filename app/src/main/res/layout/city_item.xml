@@ -44,7 +44,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="加载失败^~^"
+                    android:text="正在努力加载^~^"
                     android:textSize="16sp"
                     android:id="@+id/City_situation"
                     android:textColor="@color/black"/>
